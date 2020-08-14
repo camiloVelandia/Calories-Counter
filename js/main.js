@@ -5,7 +5,7 @@ let description = document.getElementById("description");
 let carbs = document.getElementById("carbs");
 let calories = document.getElementById("calories");
 let protein = document.getElementById("protein");
-
+let list = [];
 const addBtn = document.querySelector(".addButton");
 
 addBtn.addEventListener("click", (e) => {
@@ -15,9 +15,29 @@ addBtn.addEventListener("click", (e) => {
   protein.value === "" ? protein.classList.add("is-invalid") : null;
 
   if (description.value && carbs.value && calories.value && protein.value) {
-    console.log("ok");
+    add();
   }
 });
+
+const add = () => {
+  const newItem = {
+    description: description.value,
+    calories: parseInt(calories.value),
+    carbs: parseInt(carbs.value),
+    protein: parseInt(protein.value),
+  };
+
+  list.push(newItem);
+  cleanInputs();
+  console.log(list);
+};
+
+const cleanInputs = () => {
+  description.value = "";
+  calories.value = "";
+  carbs.value = "";
+  protein.value = "";
+};
 
 description.addEventListener("keypress", (e) => {
   description.classList.remove("is-invalid");
