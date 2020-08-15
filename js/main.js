@@ -8,6 +8,37 @@ let protein = document.getElementById("protein");
 let list = [];
 const addBtn = document.querySelector(".addButton");
 
+const attrsToString = (obj = {}) => {
+  const keys = Object.assign(obj);
+  const attrs = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    let attr = keys[i];
+    attrs.push(`${attr}='${obj[attr]}'`);
+  }
+  const string = attrs.join("");
+  return string;
+};
+
+const tagAttrs = (obj) => (content = "") =>
+  `<${obj.tag}${obj.attrs ? "" : ""}${attrsToString(obj.attrs)}> ${content}</${
+    obj.tag
+  }>`;
+
+const tag = (t) => {
+  if (typeof t === "string") {
+    tagAttrs({ tag: t });
+  } else {
+    tagAttrs(t);
+  }
+};
+
+const tableRowTag = tag("tr");
+const tableRow = (items) => compose(tableRowTag, tableCells)(items);
+
+const tableCell = tag("td");
+const tableCells = (items) => items.map(tableCell).join("");
+
 addBtn.addEventListener("click", (e) => {
   description.value === "" ? description.classList.add("is-invalid") : null;
   carbs.value === "" ? carbs.classList.add("is-invalid") : null;
