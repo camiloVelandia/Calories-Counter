@@ -27,10 +27,9 @@ const tagAttrs = (obj) => (content = "") =>
 
 const tag = (t) => {
   if (typeof t === "string") {
-    tagAttrs({ tag: t });
-  } else {
-    tagAttrs(t);
+    return tagAttrs({ tag: t });
   }
+  return tagAttrs(t);
 };
 
 const tableRowTag = tag("tr");
@@ -38,6 +37,8 @@ const tableRow = (items) => compose(tableRowTag, tableCells)(items);
 
 const tableCell = tag("td");
 const tableCells = (items) => items.map(tableCell).join("");
+
+const trashIcon = tag({ tag: "i", attrs: { class: "fas fa-trash-alt" } })("");
 
 addBtn.addEventListener("click", (e) => {
   description.value === "" ? description.classList.add("is-invalid") : null;
@@ -60,7 +61,24 @@ const add = () => {
 
   list.push(newItem);
   cleanInputs();
-  console.log(list);
+  updateTotals();
+  renderItems();
+};
+
+const updateTotals = () => {
+  let calories = 0,
+    carbs = 0,
+    protein = 0;
+
+  list.map((item) => {
+    (calories += item.calories),
+      (carbs += item.carbs),
+      (protein += item.protein);
+  });
+
+  document.getElementById("totalCalories").innerHTML = calories;
+  document.getElementById("totalCarbs").innerHTML = carbs;
+  document.getElementById("totalProtein").innerHTML = protein;
 };
 
 const cleanInputs = () => {
@@ -68,6 +86,36 @@ const cleanInputs = () => {
   calories.value = "";
   carbs.value = "";
   protein.value = "";
+};
+
+const renderItems = () => {
+  const listWrapper = document.querySelector("tbody");
+
+  listWrapper.innerHTML = "";
+
+  list.map((item, index) => {
+    const removeButton = tag({
+      tag: "button",
+      attrs: {
+        class: "btn btn-outline-danger",
+        onclick: `removeItem(${index}) `,
+      },
+    })(trashIcon);
+    listWrapper.innerHTML += tableRow([
+      item.description,
+      item.calories,
+      item.carbs,
+      item.protein,
+      removeButton,
+    ]);
+  });
+};
+
+const removeItem = (index) => {
+  list.splice(index, 1);
+
+  updateTotals();
+  renderItems();
 };
 
 description.addEventListener("keypress", (e) => {
